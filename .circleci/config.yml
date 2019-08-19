@@ -1,16 +1,23 @@
 version: 2
 jobs:
-  build:
+  build-stage:
     docker:
       - image: debian:stretch
-
     steps:
-      - checkout
-
       - run:
-          name: Greeting
-          command: echo Hello, world.
-
+          name: echo without prod context
+          command: "echo \"non secret: [$NON_SECRET] secret: [$SECRET]\""
+  build-prod:
+    docker:
+      - image: debian:stretch
+    steps:
       - run:
-          name: Print the Current Time
-          command: date
+          name: echo with prod context
+          command: "echo \"non secret: [$NON_SECRET] secret: [$SECRET]\""
+workflows:
+  version: 2
+  my-workflow:
+    jobs:
+      - build-stage
+      - build-prod:
+          context: prod
